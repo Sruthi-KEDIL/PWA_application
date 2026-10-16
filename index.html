@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Safe Scientific – Patient Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Safe Scientific patient records – works on iPhone, Android, iPad and desktop.">
+  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#12344D" media="(prefers-color-scheme: dark)">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+  <!-- iOS "Add to Home Screen" support -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Safe Scientific">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Splash screen: grey translucent glass over the (blurred) home page, then fades away -->
+  <div id="splash" class="splash" role="status" aria-live="polite" aria-label="Loading Safe Scientific">
+    <div class="splash-card">
+      <img class="splash-logo" src="icons/logo.png" alt="Safe Scientific – Innovation In Art" width="985" height="490">
+      <div class="splash-bar" aria-hidden="true"><span></span></div>
+    </div>
+  </div>
+
+  <!-- Home page -->
+  <div id="app" class="app">
+
+    <header class="topbar">
+      <span class="logo-chip"><img class="topbar-logo" src="icons/logo.png" alt="Safe Scientific" width="985" height="490"></span>
+      <h1 class="topbar-title">Patient records</h1>
+    </header>
+
+    <main class="content">
+
+      <!-- iOS install hint (only shown in iPhone/iPad Safari before it is installed) -->
+      <aside id="install-hint" class="hint" hidden>
+        <p><strong>Add this app to your Home Screen.</strong>
+           Tap the Share button, then choose <em>Add to Home Screen</em>.</p>
+        <button id="install-dismiss" type="button" class="hint-close" aria-label="Dismiss">Got it</button>
+      </aside>
+
+      <section class="summary" aria-label="Summary">
+        <div class="stat"><span class="stat-value" id="stat-count">0</span><span class="stat-label">Patients</span></div>
+        <div class="stat"><span class="stat-value" id="stat-age">0</span><span class="stat-label">Average age</span></div>
+        <div class="stat"><span class="stat-value" id="stat-oocytes">0</span><span class="stat-label">Total oocytes</span></div>
+      </section>
+
+      <section id="patient-entry" class="patient-entry" aria-labelledby="patient-entry-title">
+        <h2 id="patient-entry-title">Add patient</h2>
+        <form id="patient-form" novalidate>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="patient-name">Patient name</label>
+              <input id="patient-name" name="name" type="text" autocomplete="name"
+                     autocapitalize="words" aria-describedby="patient-name-error">
+              <span id="patient-name-error" class="field-error" hidden></span>
+            </div>
+            <div class="form-field">
+              <label for="patient-id">Patient ID</label>
+              <input id="patient-id" name="id" type="text" inputmode="numeric"
+                     autocomplete="off" aria-describedby="patient-id-error">
+              <span id="patient-id-error" class="field-error" hidden></span>
+            </div>
+            <div class="form-field">
+              <label for="patient-age">Age</label>
+              <input id="patient-age" name="age" type="number" inputmode="numeric"
+                     min="0" step="1" aria-describedby="patient-age-error">
+              <span id="patient-age-error" class="field-error" hidden></span>
+            </div>
+            <div class="form-field">
+              <label for="patient-oocytes">Oocytes</label>
+              <input id="patient-oocytes" name="oocytes" type="number" inputmode="numeric"
+                     min="0" step="1" aria-describedby="patient-oocytes-error">
+              <span id="patient-oocytes-error" class="field-error" hidden></span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="add-patient-button" type="submit">Add patient</button>
+            <p id="patient-form-status" class="form-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+
+      <section class="toolbar" aria-label="Filters">
+        <label class="search">
+          <span class="visually-hidden">Search by patient name or ID</span>
+          <input id="search" type="search" inputmode="search" autocomplete="off"
+                 placeholder="Search name or patient ID">
+        </label>
+      </section>
+
+      <div class="table-wrap">
+        <table class="records">
+          <caption class="visually-hidden">Patient details</caption>
+          <thead>
+            <tr>
+              <th scope="col">Patient name</th>
+              <th scope="col">Patient ID</th>
+              <th scope="col" class="num">Age</th>
+              <th scope="col" class="num">Oocytes</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <p id="empty" class="empty" hidden>No patients match your search. Clear the search box to see everyone.</p>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      <p>Safe Scientific · Ambattur, Chennai</p>
+    </footer>
+  </div>
+
+  <noscript>
+    <p style="padding:24px;font-family:sans-serif">This app needs JavaScript to show patient records.</p>
+  </noscript>
+
+  <script src="app.js"></script>
+</body>
+</html>
