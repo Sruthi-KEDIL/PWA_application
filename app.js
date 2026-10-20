@@ -336,12 +336,48 @@
     Promise.all([ready, minTime]).then(showApp);
   }
 
-  /* ---------- iOS install hint ---------- */
+  /* ---------- Install hint ---------- */
+
+  const hintDismissed = () => getItem(local, 'ss-install-hint-dismissed') === '1';
 
   function maybeShowInstallHint() {
+<<<<<<< HEAD
     if ($('install-hint') && isIOS && !isStandalone && getItem(local, 'ss-install-hint-dismissed') !== '1') {
+=======
+    if (isIOS && !isStandalone && !hintDismissed()) {
+>>>>>>> 0cbe4d15c083c20700172d060bb4d4cac0e62ea8
       $('install-hint').hidden = false;
     }
+  }
+
+  // Android / desktop Chrome and Edge: offer an Install button when the browser allows it.
+  let deferredInstall = null;
+
+  function setupInstallPrompt() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstall = e;
+      if (isStandalone || hintDismissed()) return;
+      $('install-text').innerHTML = '<strong>Install this app on your device.</strong> ' +
+        'It opens from your Home Screen and works offline.';
+      $('install-button').hidden = false;
+      $('install-dismiss').textContent = 'Not now';
+      $('install-hint').hidden = false;
+    });
+
+    $('install-button').addEventListener('click', () => {
+      if (!deferredInstall) return;
+      deferredInstall.prompt();
+      deferredInstall.userChoice.finally(() => {
+        deferredInstall = null;
+        $('install-hint').hidden = true;
+      });
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstall = null;
+      $('install-hint').hidden = true;
+    });
   }
 
   /* ---------- Service worker (PWA / offline) ---------- */
@@ -365,6 +401,7 @@
   bindEvents();
   render();
   maybeShowInstallHint();
+  setupInstallPrompt();
   startSplash();
   registerServiceWorker();
 })();
