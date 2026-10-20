@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#12344D" media="(prefers-color-scheme: dark)">
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 
@@ -43,11 +43,14 @@
 
     <main class="content">
 
-      <!-- iOS install hint (only shown in iPhone/iPad Safari before it is installed) -->
+      <!-- Install hint: iOS shows Share > Add to Home Screen steps; Android / desktop get an Install button -->
       <aside id="install-hint" class="hint" hidden>
-        <p><strong>Add this app to your Home Screen.</strong>
+        <p id="install-text"><strong>Add this app to your Home Screen.</strong>
            Tap the Share button, then choose <em>Add to Home Screen</em>.</p>
-        <button id="install-dismiss" type="button" class="hint-close" aria-label="Dismiss">Got it</button>
+        <div class="hint-actions">
+          <button id="install-button" type="button" class="hint-close" hidden>Install</button>
+          <button id="install-dismiss" type="button" class="hint-close" aria-label="Dismiss">Got it</button>
+        </div>
       </aside>
 
       <section class="summary" aria-label="Summary">

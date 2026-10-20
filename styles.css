@@ -216,6 +216,9 @@ h1, p { margin: 0; }
 }
 
 .hint-close:hover { background: #00608f; }
+.hint-close[hidden] { display: none; }
+
+.hint-actions { display: flex; flex: none; gap: 8px; }
 
 /* Summary */
 
