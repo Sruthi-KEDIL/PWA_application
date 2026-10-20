@@ -90,7 +90,7 @@
     $('theme-toggle').setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
     $('theme-toggle-icon').textContent = isDark ? '☀' : '☾';
     $('theme-toggle-label').textContent = isDark ? 'Light mode' : 'Dark mode';
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#1f262b' : '#e8ebee');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#1f262b' : '#e7e9ec');
   }
 
   function initializeTheme() {
@@ -341,11 +341,7 @@
   const hintDismissed = () => getItem(local, 'ss-install-hint-dismissed') === '1';
 
   function maybeShowInstallHint() {
-<<<<<<< HEAD
-    if ($('install-hint') && isIOS && !isStandalone && getItem(local, 'ss-install-hint-dismissed') !== '1') {
-=======
-    if (isIOS && !isStandalone && !hintDismissed()) {
->>>>>>> 0cbe4d15c083c20700172d060bb4d4cac0e62ea8
+    if ($('install-hint') && isIOS && !isStandalone && !hintDismissed()) {
       $('install-hint').hidden = false;
     }
   }

@@ -12,7 +12,10 @@
   --accent:     linear-gradient(115deg, #315f77 0%, #476f88 52%, #9b506d 100%);
   --ink:        #29343d;
   --ink-soft:   #63717b;
-  --mist:       #e8ebee;
+  --mist:       #e7e9ec;
+  --page-bg:    linear-gradient(135deg, #f4f5f6 0%, #e1e4e7 48%, #eceef0 100%);
+  --ambient-light: radial-gradient(circle, rgba(255, 255, 255, .88), rgba(206, 210, 214, .4) 42%, rgba(156, 162, 168, .2) 68%, transparent 72%);
+  --ambient-shadow: radial-gradient(circle, rgba(111, 119, 127, .24), rgba(177, 182, 187, .18) 48%, rgba(224, 227, 230, .12) 68%, transparent 72%);
   --glass:      rgba(255, 255, 255, .64);
   --glass-strong: rgba(255, 255, 255, .78);
   --glass-border: rgba(255, 255, 255, .82);
@@ -46,7 +49,8 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: var(--ink);
-  background: var(--mist);
+  background: var(--page-bg);
+  background-attachment: fixed;
   /* keep content clear of notches / rounded corners in every orientation */
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
@@ -69,7 +73,7 @@ body::before {
   height: min(72vw, 760px);
   top: -28vw;
   left: -18vw;
-  background: radial-gradient(circle, rgba(255, 255, 255, .72), rgba(173, 86, 116, .07) 42%, rgba(191, 201, 208, .12) 68%, transparent 72%);
+  background: var(--ambient-light);
 }
 
 body::after {
@@ -77,7 +81,7 @@ body::after {
   height: min(70vw, 700px);
   right: -24vw;
   bottom: -32vw;
-  background: radial-gradient(circle, rgba(71, 127, 152, .18), rgba(173, 86, 116, .06) 48%, rgba(221, 226, 230, .08) 68%, transparent 72%);
+  background: var(--ambient-shadow);
   animation-delay: -12s;
 }
 
@@ -694,6 +698,9 @@ h1, p { margin: 0; }
   --ink:          #e4e9ed;
   --ink-soft:     #aab5bd;
   --mist:         #20262b;
+  --page-bg:      linear-gradient(135deg, #30363b 0%, #1d2328 50%, #292f34 100%);
+  --ambient-light: radial-gradient(circle, rgba(190, 197, 202, .2), rgba(122, 130, 137, .12) 44%, rgba(53, 61, 67, .08) 68%, transparent 72%);
+  --ambient-shadow: radial-gradient(circle, rgba(170, 178, 184, .16), rgba(93, 102, 109, .1) 48%, rgba(45, 53, 59, .08) 68%, transparent 72%);
   --glass:        rgba(39, 47, 53, .72);
   --glass-strong: rgba(33, 40, 46, .86);
   --glass-border: rgba(213, 224, 231, .14);
@@ -705,14 +712,6 @@ h1, p { margin: 0; }
   --splash-backdrop: rgba(20, 27, 32, .96);
   --splash-glass: rgba(20, 27, 32, .76);
   color-scheme: dark;
-}
-
-:root[data-theme="dark"] body::before {
-  background: radial-gradient(circle, rgba(106, 126, 139, .2), rgba(173, 86, 116, .06) 44%, rgba(53, 65, 74, .08) 68%, transparent 72%);
-}
-
-:root[data-theme="dark"] body::after {
-  background: radial-gradient(circle, rgba(71, 127, 152, .17), rgba(173, 86, 116, .06) 48%, rgba(45, 55, 62, .05) 68%, transparent 72%);
 }
 
 :root[data-theme="dark"] .records thead th,

@@ -1,11 +1,7 @@
 /* Safe Scientific PWA – service worker
    Increase CACHE_VERSION every time you change any file, so users get the update. */
 
-<<<<<<< HEAD
-const CACHE_VERSION = 'v7';
-=======
-const CACHE_VERSION = 'v5';
->>>>>>> 0cbe4d15c083c20700172d060bb4d4cac0e62ea8
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = 'safe-scientific-' + CACHE_VERSION;
 
 const APP_SHELL = [
