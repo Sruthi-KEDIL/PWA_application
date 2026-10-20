@@ -37,7 +37,7 @@ Tip: https://realfavicongenerator.net or https://maskable.app/editor can create 
 
 ## 2. Match the website theme
 
-The colours at the top of `styles.css` (inside `:root`) were taken from the logo: cyan `#00A0E3`, pink `#E50A7F` and grey `#656665`. If the website uses slightly different shades, change them there. Also update `theme_color` and `background_color` in `manifest.webmanifest` and the `theme-color` meta tags in `index.html` if you change the header colour.
+The interface uses a soft grey animated background, translucent glass surfaces and a light/dark theme toggle. The first visit follows the device colour preference; the selected theme is saved on the device. Theme colours and glass effects are defined by the CSS variables near the top of `styles.css`. If you change the app's base background, also update `theme_color` and `background_color` in `manifest.webmanifest` and the theme colour in `index.html` and `app.js`.
 
 ## 3. Run it in VS Code
 
@@ -72,10 +72,11 @@ While developing, tick **Update on reload** in DevTools > Application > Service 
 
 ### Adding patient records
 
-- Use the **Add patient** form to enter a name, numeric patient ID, age and oocyte count. Patient IDs must be unique.
-- The page starts with 10 patient records and allows up to 20 records total.
+- Use the navigation menu to switch between **Patient records** and **Add patient**.
+- Use the **Add patient** page to enter a name, numeric patient ID, age and oocyte count. Patient IDs must be unique.
+- Patient records starts with 10 sample records and allows up to 20 records total.
 - Names accept letters and spaces only; age and oocyte counts must be whole numbers.
-- Added records are kept only in memory for the current page session and are cleared when the page is closed or refreshed. Do not enter real patient data; persistent records require a secure back end.
+- Added records are retained in session storage while the browser tab session is open, including when switching between the two pages. They are cleared when the session ends. Do not enter real patient data; persistent records require a secure back end.
 
 ## 5. Open it on your phone from the local server
 

@@ -47,11 +47,63 @@
   const local = safeStorage('localStorage');
 
   function getItem(store, key) { try { return store ? store.getItem(key) : null; } catch (e) { return null; } }
-  function setItem(store, key, val) { try { if (store) store.setItem(key, val); } catch (e) { /* ignore */ } }
+  function setItem(store, key, val) {
+    try {
+      if (!store) return false;
+      store.setItem(key, val);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function loadAddedPatients() {
+    const saved = getItem(session, 'ss-added-patients');
+    if (!saved) return [];
+
+    try {
+      const patients = JSON.parse(saved);
+      if (!Array.isArray(patients) || patients.some((patient) =>
+        !patient || typeof patient.name !== 'string' || typeof patient.id !== 'string' ||
+        !Number.isSafeInteger(patient.age) || patient.age < 0 ||
+        !Number.isSafeInteger(patient.oocytes) || patient.oocytes < 0
+      )) {
+        throw new Error('Unexpected patient data format.');
+      }
+      return patients;
+    } catch (error) {
+      console.warn('Could not load patient records for this session:', error);
+      return [];
+    }
+  }
 
   let query = '';
-  let addedPatients = [];
+  const addedPatients = loadAddedPatients();
   let hasSubmittedPatientForm = false;
+
+  /* ---------- Theme ---------- */
+
+  function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    $('theme-toggle').setAttribute('aria-pressed', String(isDark));
+    $('theme-toggle').setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    $('theme-toggle-icon').textContent = isDark ? '☀' : '☾';
+    $('theme-toggle-label').textContent = isDark ? 'Light mode' : 'Dark mode';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#1f262b' : '#e8ebee');
+  }
+
+  function initializeTheme() {
+    const savedTheme = getItem(local, 'ss-theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : (prefersDark ? 'dark' : 'light'));
+
+    $('theme-toggle').addEventListener('click', () => {
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(theme);
+      setItem(local, 'ss-theme', theme);
+    });
+  }
 
   /* ---------- Rendering ---------- */
 
@@ -93,29 +145,32 @@
       ? all.filter((p) => p.name.toLowerCase().includes(q) || p.id.includes(q))
       : all;
 
-    const maxOocytes = Math.max.apply(null, all.map((p) => p.oocytes));
     const tbody = $('rows');
-    tbody.textContent = '';
+    if (tbody) {
+      const maxOocytes = Math.max.apply(null, all.map((p) => p.oocytes));
+      tbody.textContent = '';
 
-    list.forEach((p) => {
-      const tr = document.createElement('tr');
-      tr.appendChild(td('name', 'Patient name', p.name));
-      tr.appendChild(td('pid', 'Patient ID', p.id));
-      tr.appendChild(td('num', 'Age', String(p.age)));
-      tr.appendChild(td('num', 'Oocytes', oocyteCell(p.oocytes, maxOocytes)));
-      tbody.appendChild(tr);
-    });
+      list.forEach((p) => {
+        const tr = document.createElement('tr');
+        tr.appendChild(td('name', 'Patient name', p.name));
+        tr.appendChild(td('pid', 'Patient ID', p.id));
+        tr.appendChild(td('num', 'Age', String(p.age)));
+        tr.appendChild(td('num', 'Oocytes', oocyteCell(p.oocytes, maxOocytes)));
+        tbody.appendChild(tr);
+      });
 
-    $('empty').hidden = list.length !== 0;
+      $('empty').hidden = list.length !== 0;
+    }
 
     // Summary reflects what is currently listed
     const totalOocytes = list.reduce((s, p) => s + p.oocytes, 0);
     const avgAge = list.length ? (list.reduce((s, p) => s + p.age, 0) / list.length) : 0;
-    $('stat-count').textContent = String(list.length);
-    $('stat-age').textContent = list.length ? avgAge.toFixed(1) : '–';
-    $('stat-oocytes').textContent = String(totalOocytes);
+    if ($('stat-count')) $('stat-count').textContent = String(list.length);
+    if ($('stat-age')) $('stat-age').textContent = list.length ? avgAge.toFixed(1) : '–';
+    if ($('stat-oocytes')) $('stat-oocytes').textContent = String(totalOocytes);
 
-    $('patient-form').querySelector('[type="submit"]').disabled = all.length >= MAX_PATIENTS;
+    const form = $('patient-form');
+    if (form) form.querySelector('[type="submit"]').disabled = all.length >= MAX_PATIENTS;
   }
 
   function patientFieldError(field) {
@@ -171,12 +226,14 @@
       return;
     }
 
-    addedPatients.push({
+    const patient = {
       name: $('patient-name').value.trim(),
       id: $('patient-id').value.trim(),
       age: Number($('patient-age').value),
       oocytes: Number($('patient-oocytes').value)
-    });
+    };
+    addedPatients.push(patient);
+    const saved = setItem(session, 'ss-added-patients', JSON.stringify(addedPatients));
 
     $('patient-form').reset();
     fields.forEach((field) => {
@@ -184,11 +241,12 @@
       $(field + '-error').textContent = '';
       $(field + '-error').hidden = true;
     });
-    $('patient-form-status').textContent =
-      PATIENTS.length + addedPatients.length >= MAX_PATIENTS
+    $('patient-form-status').textContent = !saved
+      ? 'Patient added on this page, but could not be retained when switching pages. Check browser storage settings.'
+      : PATIENTS.length + addedPatients.length >= MAX_PATIENTS
         ? 'Maximum of 20 patient records reached.'
-        : 'Patient added for this session.';
-    $('search').value = '';
+        : 'Patient added for this session. Open Patient records from the menu to view it.';
+    if ($('search')) $('search').value = '';
     query = '';
     render();
     $('patient-name').focus();
@@ -197,19 +255,59 @@
   /* ---------- Events ---------- */
 
   function bindEvents() {
-    $('search').addEventListener('input', (e) => { query = e.target.value; render(); });
+    if ($('search')) $('search').addEventListener('input', (e) => { query = e.target.value; render(); });
 
-    $('patient-form').addEventListener('submit', submitPatient);
-    ['patient-name', 'patient-id', 'patient-age', 'patient-oocytes'].forEach((field) => {
-      $(field).addEventListener('input', () => {
-        if (hasSubmittedPatientForm) updatePatientField(field);
+    const form = $('patient-form');
+    if (form) {
+      form.addEventListener('submit', submitPatient);
+      ['patient-name', 'patient-id', 'patient-age', 'patient-oocytes'].forEach((field) => {
+        $(field).addEventListener('input', () => {
+          if (hasSubmittedPatientForm) updatePatientField(field);
+        });
       });
-    });
+    }
 
-    $('install-dismiss').addEventListener('click', () => {
+    if ($('install-dismiss')) $('install-dismiss').addEventListener('click', () => {
       $('install-hint').hidden = true;
       setItem(local, 'ss-install-hint-dismissed', '1');
     });
+
+    const menuToggle = $('menu-toggle');
+    const navDrawer = $('nav-drawer');
+    const navBackdrop = $('nav-backdrop');
+    const navClose = $('nav-close');
+    if (menuToggle && navDrawer && navBackdrop && navClose) {
+      const closeMenu = () => {
+        navDrawer.classList.remove('is-open');
+        navBackdrop.classList.remove('is-visible');
+        navDrawer.setAttribute('aria-hidden', 'true');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open navigation menu');
+        document.body.classList.remove('menu-open');
+      };
+      const openMenu = () => {
+        navDrawer.classList.add('is-open');
+        navBackdrop.classList.add('is-visible');
+        navDrawer.setAttribute('aria-hidden', 'false');
+        menuToggle.setAttribute('aria-expanded', 'true');
+        menuToggle.setAttribute('aria-label', 'Close navigation menu');
+        document.body.classList.add('menu-open');
+        navClose.focus();
+      };
+
+      menuToggle.addEventListener('click', () => {
+        if (menuToggle.getAttribute('aria-expanded') === 'true') closeMenu();
+        else openMenu();
+      });
+      navClose.addEventListener('click', closeMenu);
+      navBackdrop.addEventListener('click', closeMenu);
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') {
+          closeMenu();
+          menuToggle.focus();
+        }
+      });
+    }
   }
 
   /* ---------- Splash screen ---------- */
@@ -241,7 +339,7 @@
   /* ---------- iOS install hint ---------- */
 
   function maybeShowInstallHint() {
-    if (isIOS && !isStandalone && getItem(local, 'ss-install-hint-dismissed') !== '1') {
+    if ($('install-hint') && isIOS && !isStandalone && getItem(local, 'ss-install-hint-dismissed') !== '1') {
       $('install-hint').hidden = false;
     }
   }
@@ -263,6 +361,7 @@
 
   /* ---------- Start ---------- */
 
+  initializeTheme();
   bindEvents();
   render();
   maybeShowInstallHint();

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Safe Scientific – Add patient</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Add a patient record to the Safe Scientific patient workspace.">
+  <meta name="theme-color" content="#e8ebee">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Safe Scientific">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="splash" class="splash" role="status" aria-live="polite" aria-label="Loading Safe Scientific">
+    <div class="splash-card">
+      <img class="splash-logo" src="icons/logo.png" alt="Safe Scientific – Innovation In Art" width="985" height="490">
+      <div class="splash-bar" aria-hidden="true"><span></span></div>
+    </div>
+  </div>
+
+  <div id="app" class="app">
+    <header class="topbar">
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="nav-drawer">
+        <span></span><span></span><span></span>
+      </button>
+      <span class="logo-chip"><img class="topbar-logo" src="icons/logo.png" alt="Safe Scientific" width="985" height="490"></span>
+      <h1 class="topbar-title">Add patient</h1>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <span id="theme-toggle-icon" class="theme-toggle-icon" aria-hidden="true">☾</span>
+        <span id="theme-toggle-label" class="theme-toggle-label">Dark mode</span>
+      </button>
+    </header>
+
+    <button id="nav-backdrop" class="nav-backdrop" type="button" aria-label="Close navigation menu" tabindex="-1"></button>
+    <nav id="nav-drawer" class="nav-drawer" aria-label="Main navigation" aria-hidden="true">
+      <div class="nav-drawer-heading">
+        <span>Workspace</span>
+        <button id="nav-close" class="nav-close" type="button" aria-label="Close navigation menu">&times;</button>
+      </div>
+      <a class="nav-link" href="index.html">
+        <span class="nav-link-icon" aria-hidden="true">▤</span>Patient records
+      </a>
+      <a class="nav-link is-active" href="add-patient.html" aria-current="page">
+        <span class="nav-link-icon" aria-hidden="true">＋</span>Add patient
+      </a>
+      <p class="nav-drawer-note">Safe Scientific<br>Patient workspace</p>
+    </nav>
+
+    <main class="content add-page-content">
+      <section id="patient-entry" class="patient-entry" aria-labelledby="patient-entry-title">
+        <div class="page-intro">
+          <span class="section-eyebrow">Patient workspace</span>
+          <h2 id="patient-entry-title">Add patient</h2>
+          <p>Enter the patient details below. New records are available in Patient records for this browser session.</p>
+        </div>
+        <form id="patient-form" novalidate>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="patient-name">Patient name</label>
+              <input id="patient-name" name="name" type="text" autocomplete="name"
+                     autocapitalize="words" aria-describedby="patient-name-error">
+              <span id="patient-name-error" class="field-error" hidden></span>
+            </div>
+            <div class="form-field">
+              <label for="patient-id">Patient ID</label>
+              <input id="patient-id" name="id" type="text" inputmode="numeric"
+                     autocomplete="off" aria-describedby="patient-id-error">
+              <span id="patient-id-error" class="field-error" hidden></span>
+            </div>
+            <div class="form-field">
+              <label for="patient-age">Age</label>
+              <input id="patient-age" name="age" type="number" inputmode="numeric"
+                     min="0" step="1" aria-describedby="patient-age-error">
+              <span id="patient-age-error" class="field-error" hidden></span>
+            </div>
+            <div class="form-field">
+              <label for="patient-oocytes">Oocytes</label>
+              <input id="patient-oocytes" name="oocytes" type="number" inputmode="numeric"
+                     min="0" step="1" aria-describedby="patient-oocytes-error">
+              <span id="patient-oocytes-error" class="field-error" hidden></span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="add-patient-button" type="submit">Add patient</button>
+            <p id="patient-form-status" class="form-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Safe Scientific · Ambattur, Chennai</p>
+    </footer>
+  </div>
+
+  <noscript>
+    <p style="padding:24px;font-family:sans-serif">This app needs JavaScript to add patient records.</p>
+  </noscript>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,12 +1,13 @@
 /* Safe Scientific PWA – service worker
    Increase CACHE_VERSION every time you change any file, so users get the update. */
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v7';
 const CACHE_NAME = 'safe-scientific-' + CACHE_VERSION;
 
 const APP_SHELL = [
   './',
   'index.html',
+  'add-patient.html',
   'styles.css',
   'app.js',
   'manifest.webmanifest',
@@ -52,10 +53,10 @@ self.addEventListener('fetch', (event) => {
       fetch(req)
         .then((res) => {
           const copy = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put('index.html', copy));
+          caches.open(CACHE_NAME).then((c) => c.put(req, copy));
           return res;
         })
-        .catch(() => caches.match('index.html'))
+        .catch(() => caches.match(req).then((cached) => cached || caches.match('index.html')))
     );
     return;
   }
